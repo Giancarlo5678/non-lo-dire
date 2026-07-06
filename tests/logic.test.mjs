@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame } from '../game.js';
+import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance } from '../game.js';
 
 test('constants are the spec values', () => {
   assert.equal(SKIPS_PER_TURN, 3);
@@ -40,6 +40,28 @@ test('newGame reuses a provided deckOrder and cardIndex', () => {
   const s = newGame({ teamNames: ['X'], totalRounds: 1, deckSize: 4, deckOrder: order, cardIndex: 2 });
   assert.deepEqual(s.deckOrder, order);
   assert.equal(s.cardIndex, 2);
+});
+
+test('currentCard resolves through deckOrder', () => {
+  const cards = [{ w: 'zero' }, { w: 'one' }, { w: 'two' }];
+  const s = newGame({ teamNames: ['A'], totalRounds: 1, deckSize: 3, deckOrder: [2, 0, 1], cardIndex: 0 });
+  assert.equal(currentCard(s, cards).w, 'two');
+  assert.equal(currentCard({ ...s, cardIndex: 1 }, cards).w, 'zero');
+});
+
+test('advance moves to the next card without mutating input', () => {
+  const s = newGame({ teamNames: ['A'], totalRounds: 1, deckSize: 3, deckOrder: [0, 1, 2], cardIndex: 0 });
+  const s2 = advance(s);
+  assert.equal(s2.cardIndex, 1);
+  assert.equal(s.cardIndex, 0);
+});
+
+test('advance reshuffles and wraps when the deck is exhausted', () => {
+  const s = newGame({ teamNames: ['A'], totalRounds: 1, deckSize: 3, deckOrder: [0, 1, 2], cardIndex: 2 });
+  const s2 = advance(s);
+  assert.equal(s2.cardIndex, 0);
+  assert.equal(s2.deckOrder.length, 3);
+  assert.deepEqual([...s2.deckOrder].sort((a, b) => a - b), [0, 1, 2]);
 });
 
 // Small seeded PRNG for deterministic tests.

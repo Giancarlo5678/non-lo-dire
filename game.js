@@ -25,3 +25,15 @@ export function newGame({ teamNames, totalRounds, deckSize, deckOrder = null, ca
     turnEndsAt: null,
   };
 }
+
+export function currentCard(state, cards) {
+  return cards[state.deckOrder[state.cardIndex]];
+}
+
+export function advance(state) {
+  const next = state.cardIndex + 1;
+  if (next >= state.deckOrder.length) {
+    return { ...state, deckOrder: shuffle(state.deckOrder), cardIndex: 0 };
+  }
+  return { ...state, cardIndex: next };
+}
