@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance, correct, taboo, skip, startTurn, endTurn, nextTurn } from '../game.js';
+import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance, correct, taboo, skip, startTurn, endTurn, nextTurn, standings } from '../game.js';
 
 test('constants are the spec values', () => {
   assert.equal(SKIPS_PER_TURN, 3);
@@ -131,6 +131,24 @@ test('nextTurn ends the game after the last team of the last round', () => {
   const s = { ...newGame({ teamNames: ['A','B'], totalRounds: 2, deckSize: 5 }), phase: 'turnEnd', currentTeamIndex: 1, currentRound: 2 };
   const n = nextTurn(s);
   assert.equal(n.phase, 'gameOver');
+});
+
+test('standings sorts by score descending with competition ranking for ties', () => {
+  const state = { teams: [
+    { name: 'A', score: 3 },
+    { name: 'B', score: 5 },
+    { name: 'C', score: 5 },
+    { name: 'D', score: 1 },
+  ] };
+  const r = standings(state);
+  assert.deepEqual(r.map((t) => t.name), ['B', 'C', 'A', 'D']);
+  assert.deepEqual(r.map((t) => t.rank), [1, 1, 3, 4]);
+});
+
+test('standings does not mutate the source teams order', () => {
+  const state = { teams: [{ name: 'A', score: 1 }, { name: 'B', score: 2 }] };
+  standings(state);
+  assert.equal(state.teams[0].name, 'A');
 });
 
 // Small seeded PRNG for deterministic tests.

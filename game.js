@@ -85,3 +85,18 @@ export function nextTurn(state) {
     turnEndsAt: null,
   };
 }
+
+export function standings(state) {
+  const sorted = state.teams
+    .map((t) => ({ name: t.name, score: t.score }))
+    .sort((a, b) => b.score - a.score);
+  let rank = 0;
+  let prevScore = null;
+  return sorted.map((t, i) => {
+    if (t.score !== prevScore) {
+      rank = i + 1;
+      prevScore = t.score;
+    }
+    return { ...t, rank };
+  });
+}
