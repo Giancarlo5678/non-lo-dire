@@ -196,3 +196,20 @@ renderers.turnEnd = () => {
   $('btn-next').textContent = isLast ? 'Risultati finali' : 'Prossima squadra';
   $('btn-next').onclick = () => { state = nextTurn(state); render(); };
 };
+
+renderers.gameOver = () => {
+  stopTimer();
+  releaseWakeLock();
+  renderStandings($('gameover-standings'), state);
+  $('btn-newgame').onclick = () => {
+    // Keep team names for convenience; deck position carries over via load() in onStart.
+    const names = state.teams.map((t) => t.name);
+    state = null;
+    buildSetup();
+    const box = $('team-names');
+    $('team-count').value = String(names.length);
+    renderTeamNameInputs();
+    [...box.querySelectorAll('input')].forEach((inp, i) => { if (names[i]) inp.value = names[i]; });
+    show('setup');
+  };
+};
