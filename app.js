@@ -1,6 +1,10 @@
 import { CARDS } from './cards.js';
 import { newGame, startTurn, correct, taboo, skip, endTurn, nextTurn, currentCard, standings, TURN_MS, SKIPS_PER_TURN } from './game.js';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+
 const STORAGE_KEY = 'nonlodire.game';
 const $ = (id) => document.getElementById(id);
 let state = null;
