@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance, correct, taboo, skip } from '../game.js';
+import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance, correct, taboo, skip, startTurn, endTurn, nextTurn } from '../game.js';
 
 test('constants are the spec values', () => {
   assert.equal(SKIPS_PER_TURN, 3);
@@ -96,6 +96,41 @@ test('skip is a no-op when no skips remain', () => {
   const s = skip(base);
   assert.equal(s.skipsLeft, 0);
   assert.equal(s.cardIndex, base.cardIndex);
+});
+
+test('startTurn sets phase and absolute deadline', () => {
+  const s = startTurn(newGame({ teamNames: ['A','B'], totalRounds: 2, deckSize: 5 }), 1000, 60000);
+  assert.equal(s.phase, 'turn');
+  assert.equal(s.turnEndsAt, 61000);
+});
+
+test('endTurn moves to turnEnd', () => {
+  assert.equal(endTurn({ phase: 'turn' }).phase, 'turnEnd');
+});
+
+test('nextTurn rotates to the next team within the same round', () => {
+  const s = { ...newGame({ teamNames: ['A','B'], totalRounds: 2, deckSize: 5 }), phase: 'turnEnd', currentTeamIndex: 0, currentRound: 1, skipsLeft: 1, turnPoints: 4 };
+  const n = nextTurn(s);
+  assert.equal(n.phase, 'handoff');
+  assert.equal(n.currentTeamIndex, 1);
+  assert.equal(n.currentRound, 1);
+  assert.equal(n.skipsLeft, 3);
+  assert.equal(n.turnPoints, 0);
+  assert.equal(n.turnEndsAt, null);
+});
+
+test('nextTurn wraps to next round after the last team', () => {
+  const s = { ...newGame({ teamNames: ['A','B'], totalRounds: 2, deckSize: 5 }), phase: 'turnEnd', currentTeamIndex: 1, currentRound: 1 };
+  const n = nextTurn(s);
+  assert.equal(n.phase, 'handoff');
+  assert.equal(n.currentTeamIndex, 0);
+  assert.equal(n.currentRound, 2);
+});
+
+test('nextTurn ends the game after the last team of the last round', () => {
+  const s = { ...newGame({ teamNames: ['A','B'], totalRounds: 2, deckSize: 5 }), phase: 'turnEnd', currentTeamIndex: 1, currentRound: 2 };
+  const n = nextTurn(s);
+  assert.equal(n.phase, 'gameOver');
 });
 
 // Small seeded PRNG for deterministic tests.

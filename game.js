@@ -56,3 +56,32 @@ export function skip(state) {
   if (state.skipsLeft <= 0) return state;
   return advance({ ...state, skipsLeft: state.skipsLeft - 1 });
 }
+
+export function startTurn(state, now = Date.now(), turnMs = TURN_MS) {
+  return { ...state, phase: 'turn', turnEndsAt: now + turnMs };
+}
+
+export function endTurn(state) {
+  return { ...state, phase: 'turnEnd' };
+}
+
+export function nextTurn(state) {
+  let teamIndex = state.currentTeamIndex + 1;
+  let round = state.currentRound;
+  if (teamIndex >= state.teams.length) {
+    teamIndex = 0;
+    round += 1;
+  }
+  if (round > state.totalRounds) {
+    return { ...state, phase: 'gameOver' };
+  }
+  return {
+    ...state,
+    phase: 'handoff',
+    currentTeamIndex: teamIndex,
+    currentRound: round,
+    skipsLeft: SKIPS_PER_TURN,
+    turnPoints: 0,
+    turnEndsAt: null,
+  };
+}
