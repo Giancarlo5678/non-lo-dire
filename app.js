@@ -70,8 +70,34 @@ function phaseToScreen(phase) {
   return { handoff: 'handoff', turn: 'turn', turnEnd: 'turnend', gameOver: 'gameover' }[phase] ?? 'setup';
 }
 
-// Renderers are filled in by later tasks.
 const renderers = {};
+
+renderers.handoff = () => {
+  $('handoff-round').textContent = `Round ${state.currentRound} di ${state.totalRounds}`;
+  $('handoff-team').textContent = state.teams[state.currentTeamIndex].name;
+  const cd = $('countdown');
+  cd.classList.add('hidden');
+  $('btn-go').classList.remove('hidden');
+  $('btn-go').onclick = runCountdown;
+};
+
+function runCountdown() {
+  $('btn-go').classList.add('hidden');
+  const cd = $('countdown');
+  cd.classList.remove('hidden');
+  let n = 3;
+  cd.textContent = String(n);
+  const iv = setInterval(() => {
+    n -= 1;
+    if (n <= 0) {
+      clearInterval(iv);
+      state = startTurn(state, Date.now(), TURN_MS);
+      render();
+    } else {
+      cd.textContent = String(n);
+    }
+  }, 1000);
+}
 
 buildSetup();
 const resumed = load();
@@ -80,5 +106,58 @@ if (resumed && resumed.phase && resumed.phase !== 'gameOver') {
 }
 show('setup');
 
-// Exposed for later tasks in this module (no export needed — same file).
-Object.assign(globalThis, {}); // placeholder, removed when renderers are added
+let timerHandle = null;
+let wakeLock = null;
+
+async function requestWakeLock() {
+  try { wakeLock = await navigator.wakeLock?.request('screen'); } catch { wakeLock = null; }
+}
+function releaseWakeLock() {
+  try { wakeLock?.release(); } catch {}
+  wakeLock = null;
+}
+
+function renderCard() {
+  const card = currentCard(state, CARDS);
+  $('card-word').textContent = card.w;
+  $('card-taboo').innerHTML = '';
+  for (const t of card.t) {
+    const li = document.createElement('li');
+    li.textContent = t;
+    $('card-taboo').append(li);
+  }
+  $('turn-meta').textContent =
+    `${state.teams[state.currentTeamIndex].name} · punti turno: ${state.turnPoints}`;
+  $('skip-count').textContent = String(state.skipsLeft);
+  $('btn-skip').disabled = state.skipsLeft <= 0;
+}
+
+function tick() {
+  const remainingMs = Math.max(0, state.turnEndsAt - Date.now());
+  const secs = Math.ceil(remainingMs / 1000);
+  $('turn-timer').textContent = String(secs);
+  $('turn-timer').classList.toggle('warn', secs <= 10);
+  $('turn-timerbar-fill').style.width = `${(remainingMs / TURN_MS) * 100}%`;
+  if (remainingMs <= 0) {
+    stopTimer();
+    releaseWakeLock();
+    state = endTurn(state);
+    render();
+  }
+}
+function startTimer() {
+  stopTimer();
+  tick();
+  timerHandle = setInterval(tick, 250);
+}
+function stopTimer() {
+  if (timerHandle) clearInterval(timerHandle);
+  timerHandle = null;
+}
+
+renderers.turn = () => {
+  renderCard();
+  startTimer();
+  requestWakeLock();
+  // Button wiring is added in Task 11.
+};
