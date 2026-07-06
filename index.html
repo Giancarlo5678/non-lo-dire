@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#7c3aed">
+<title>Non lo dire</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <section class="screen active" id="screen-setup">
+    <h1>Non lo dire</h1>
+    <label>Numero di squadre
+      <select id="team-count"></select>
+    </label>
+    <div id="team-names"></div>
+    <label>Numero di round
+      <input id="round-count" type="number" min="1" max="20" value="5" inputmode="numeric">
+    </label>
+    <button id="btn-start" class="primary big">Inizia partita</button>
+    <button id="btn-resume" class="ghost hidden">Riprendi partita</button>
+  </section>
+
+  <section class="screen" id="screen-handoff">
+    <p class="round-label" id="handoff-round"></p>
+    <h2 id="handoff-team"></h2>
+    <p>Passa il telefono a chi descrive.</p>
+    <button id="btn-go" class="primary big">Via!</button>
+    <div id="countdown" class="countdown hidden"></div>
+  </section>
+
+  <section class="screen" id="screen-turn">
+    <div class="turn-top">
+      <span id="turn-timer" class="timer">60</span>
+      <div class="timerbar"><div id="turn-timerbar-fill"></div></div>
+      <span id="turn-meta"></span>
+    </div>
+    <div class="card">
+      <h2 id="card-word"></h2>
+      <ul id="card-taboo"></ul>
+    </div>
+    <div class="turn-actions">
+      <button id="btn-taboo" class="danger">✗ Vietata</button>
+      <button id="btn-skip" class="ghost">Skip (<span id="skip-count">3</span>)</button>
+      <button id="btn-correct" class="success">✓ Indovinata</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-turnend">
+    <h2>Turno finito</h2>
+    <p id="turnend-summary"></p>
+    <ol id="turnend-standings" class="standings"></ol>
+    <button id="btn-next" class="primary big"></button>
+  </section>
+
+  <section class="screen" id="screen-gameover">
+    <h2>Risultati finali</h2>
+    <ol id="gameover-standings" class="standings"></ol>
+    <button id="btn-newgame" class="primary big">Nuova partita</button>
+  </section>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
