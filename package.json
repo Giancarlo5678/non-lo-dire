@@ -1,0 +1,12 @@
+{
+  "name": "non-lo-dire",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Party game stile Taboo (PWA per iPhone)",
+  "scripts": {
+    "test": "node --test && node tests/validate-cards.mjs",
+    "test:logic": "node --test",
+    "icons": "node tools/make-icons.mjs"
+  }
+}
