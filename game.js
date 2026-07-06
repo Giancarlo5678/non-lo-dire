@@ -37,3 +37,22 @@ export function advance(state) {
   }
   return { ...state, cardIndex: next };
 }
+
+function bumpScore(state, delta) {
+  return state.teams.map((t, i) =>
+    i === state.currentTeamIndex ? { ...t, score: t.score + delta } : t
+  );
+}
+
+export function correct(state) {
+  return advance({ ...state, teams: bumpScore(state, +1), turnPoints: state.turnPoints + 1 });
+}
+
+export function taboo(state) {
+  return advance({ ...state, teams: bumpScore(state, -1), turnPoints: state.turnPoints - 1 });
+}
+
+export function skip(state) {
+  if (state.skipsLeft <= 0) return state;
+  return advance({ ...state, skipsLeft: state.skipsLeft - 1 });
+}

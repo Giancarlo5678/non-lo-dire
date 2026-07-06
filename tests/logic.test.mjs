@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance } from '../game.js';
+import { SKIPS_PER_TURN, TURN_MS, shuffle, newGame, currentCard, advance, correct, taboo, skip } from '../game.js';
 
 test('constants are the spec values', () => {
   assert.equal(SKIPS_PER_TURN, 3);
@@ -62,6 +62,40 @@ test('advance reshuffles and wraps when the deck is exhausted', () => {
   assert.equal(s2.cardIndex, 0);
   assert.equal(s2.deckOrder.length, 3);
   assert.deepEqual([...s2.deckOrder].sort((a, b) => a - b), [0, 1, 2]);
+});
+
+function turnState() {
+  const s = newGame({ teamNames: ['A', 'B'], totalRounds: 3, deckSize: 5, deckOrder: [0,1,2,3,4], cardIndex: 0 });
+  return { ...s, phase: 'turn', currentTeamIndex: 1 };
+}
+
+test('correct adds a point to the current team and advances', () => {
+  const s = correct(turnState());
+  assert.equal(s.teams[1].score, 1);
+  assert.equal(s.teams[0].score, 0);
+  assert.equal(s.turnPoints, 1);
+  assert.equal(s.cardIndex, 1);
+});
+
+test('taboo removes a point from the current team and advances', () => {
+  const s = taboo(turnState());
+  assert.equal(s.teams[1].score, -1);
+  assert.equal(s.turnPoints, -1);
+  assert.equal(s.cardIndex, 1);
+});
+
+test('skip decrements skipsLeft and advances', () => {
+  const s = skip(turnState());
+  assert.equal(s.skipsLeft, 2);
+  assert.equal(s.cardIndex, 1);
+  assert.equal(s.teams[1].score, 0);
+});
+
+test('skip is a no-op when no skips remain', () => {
+  const base = { ...turnState(), skipsLeft: 0 };
+  const s = skip(base);
+  assert.equal(s.skipsLeft, 0);
+  assert.equal(s.cardIndex, base.cardIndex);
 });
 
 // Small seeded PRNG for deterministic tests.
