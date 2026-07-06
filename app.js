@@ -86,6 +86,7 @@ renderers.handoff = () => {
 };
 
 function runCountdown() {
+  $('btn-go').onclick = null;
   $('btn-go').classList.add('hidden');
   const cd = $('countdown');
   cd.classList.remove('hidden');
@@ -137,6 +138,7 @@ function renderCard() {
 }
 
 function tick() {
+  if (!state || state.phase !== 'turn') { stopTimer(); return; }
   const remainingMs = Math.max(0, state.turnEndsAt - Date.now());
   const secs = Math.ceil(remainingMs / 1000);
   $('turn-timer').textContent = String(secs);

@@ -634,7 +634,6 @@ export const CARDS = [
   { w: 'Frisbee', t: ['disco', 'lanciare', 'spiaggia', 'cane', 'volante'] },
   { w: 'Nascondino', t: ['contare', 'cercare', 'bambini', 'muro', 'silenzio'] },
   { w: 'Campana (gioco)', t: ['gesso', 'saltellare', 'numeri', 'cortile', 'sassolino'] },
-  { w: 'Elastico (gioco)', t: ['gambe', 'saltare', 'bambine', 'cortile', 'gomma'] },
   { w: 'Videogioco', t: ['console', 'schermo', 'joystick', 'livelli', 'giocatore'] },
   { w: 'Console', t: ['videogioco', 'joystick', 'schermo', 'salvare', 'giocatore'] },
   { w: 'Robot giocattolo', t: ['batterie', 'telecomando', 'metallo', 'bambini', 'trasformare'] },
@@ -1223,7 +1222,6 @@ export const CARDS = [
   { w: 'Slot machine', t: ['casinò', 'leva', 'simboli', 'jackpot', 'monete'] },
   { w: 'Biliardo', t: ['stecca', 'palline', 'tavolo verde', 'buca', 'triangolo'] },
   { w: 'Ping pong', t: ['racchetta', 'rete', 'pallina bianca', 'tavolo', 'rimbalzo'] },
-  { w: 'Freccette bersaglio', t: ['centro', 'lanciare', 'punti', 'pub', 'cerchi'] },
 
   // ===== MITOLOGIA NORDICA E ALTRO =====
   { w: 'Odino', t: ['Asgard', 'corvo', 'un occhio', 'lancia', 'saggezza'] },
