@@ -159,5 +159,40 @@ renderers.turn = () => {
   renderCard();
   startTimer();
   requestWakeLock();
-  // Button wiring is added in Task 11.
+  $('btn-correct').onclick = () => act(correct);
+  $('btn-taboo').onclick = () => act(taboo);
+  $('btn-skip').onclick = () => act(skip);
+};
+
+function act(fn) {
+  state = fn(state);
+  save();
+  renderCard();
+}
+
+function renderStandings(listEl, st) {
+  const rows = standings(st);
+  const topScore = rows.length ? rows[0].score : 0;
+  listEl.innerHTML = '';
+  for (const t of rows) {
+    const li = document.createElement('li');
+    if (t.score === topScore) li.classList.add('leader');
+    const name = document.createElement('span');
+    name.textContent = `${t.rank}. ${t.name}`;
+    const score = document.createElement('span');
+    score.textContent = String(t.score);
+    li.append(name, score);
+    listEl.append(li);
+  }
+}
+
+renderers.turnEnd = () => {
+  stopTimer();
+  releaseWakeLock();
+  const team = state.teams[state.currentTeamIndex].name;
+  $('turnend-summary').textContent = `${team}: ${state.turnPoints >= 0 ? '+' : ''}${state.turnPoints} in questo turno`;
+  renderStandings($('turnend-standings'), state);
+  const isLast = state.currentTeamIndex === state.teams.length - 1 && state.currentRound === state.totalRounds;
+  $('btn-next').textContent = isLast ? 'Risultati finali' : 'Prossima squadra';
+  $('btn-next').onclick = () => { state = nextTurn(state); render(); };
 };
