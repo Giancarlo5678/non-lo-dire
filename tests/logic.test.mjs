@@ -104,8 +104,18 @@ test('startTurn sets phase and absolute deadline', () => {
   assert.equal(s.turnEndsAt, 61000);
 });
 
-test('endTurn moves to turnEnd', () => {
-  assert.equal(endTurn({ phase: 'turn' }).phase, 'turnEnd');
+test('endTurn moves to turnEnd and scarta la carta in gioco', () => {
+  const s = endTurn(turnState());
+  assert.equal(s.phase, 'turnEnd');
+  assert.equal(s.cardIndex, 1);
+});
+
+test('la carta non giocata non passa alla squadra successiva', () => {
+  const cards = [{ w: 'gabbiano' }, { w: 'altro' }, { w: 'terzo' }, { w: 'quarto' }, { w: 'quinto' }];
+  const s = turnState();
+  assert.equal(currentCard(s, cards).w, 'gabbiano');
+  const dopo = nextTurn(endTurn(s));
+  assert.notEqual(currentCard(dopo, cards).w, 'gabbiano');
 });
 
 test('nextTurn rotates to the next team within the same round', () => {

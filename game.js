@@ -62,7 +62,9 @@ export function startTurn(state, now = Date.now(), turnMs = TURN_MS) {
 }
 
 export function endTurn(state) {
-  return { ...state, phase: 'turnEnd' };
+  // La carta in gioco allo scadere del tempo è già stata vista: si scarta,
+  // altrimenti la squadra successiva la riceverebbe già indovinata a metà.
+  return advance({ ...state, phase: 'turnEnd' });
 }
 
 export function nextTurn(state) {
