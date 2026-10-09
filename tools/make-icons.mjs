@@ -1,17 +1,22 @@
 import { deflateSync } from 'node:zlib';
 import { writeFileSync, mkdirSync } from 'node:fs';
 
-// Solid purple background with a centered white circle. No external deps.
+// Cartello di divieto: fondo rosso scatola, disco bianco, anello e barra rossi. No external deps.
 function makePng(size) {
-  const bg = [0x7c, 0x3a, 0xed], fg = [0xff, 0xff, 0xff];
-  const cx = size / 2, cy = size / 2, r = size * 0.30;
+  const red = [0xa4, 0x16, 0x1a], white = [0xfd, 0xfc, 0xfa];
+  const cx = size / 2, cy = size / 2;
+  const rDisk = size * 0.36, rRingOut = size * 0.32, rRingIn = size * 0.24, bar = size * 0.035;
   const raw = Buffer.alloc(size * (size * 3 + 1));
   let p = 0;
   for (let y = 0; y < size; y++) {
     raw[p++] = 0; // filter byte
     for (let x = 0; x < size; x++) {
-      const inside = (x - cx) ** 2 + (y - cy) ** 2 <= r * r;
-      const c = inside ? fg : bg;
+      const d = Math.hypot(x - cx, y - cy);
+      const onBar = Math.abs((x - cx) - (y - cy)) / Math.SQRT2 <= bar;
+      let c = red;
+      if (d <= rDisk) c = white;
+      if (d <= rRingOut && d > rRingIn) c = red;
+      if (d <= rRingIn) c = onBar ? red : white;
       raw[p++] = c[0]; raw[p++] = c[1]; raw[p++] = c[2];
     }
   }

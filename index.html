@@ -6,66 +6,89 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#7c3aed">
+<meta name="theme-color" content="#A4161A">
 <title>Non lo dire</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="preload" href="fonts/zilla-slab-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-screen="setup">
 <main id="app">
   <section class="screen active" id="screen-setup">
-    <h1>Non lo dire</h1>
-    <label>Numero di squadre
-      <select id="team-count"></select>
-    </label>
-    <div id="team-names"></div>
-    <label>Numero di round
-      <input id="round-count" type="number" min="1" max="20" value="5" inputmode="numeric">
-    </label>
-    <button id="btn-start" class="primary big">Inizia partita</button>
-    <button id="btn-resume" class="ghost hidden">Riprendi partita</button>
+    <header class="cover">
+      <svg class="logo" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="58" fill="#FDFCFA"/>
+        <circle cx="60" cy="60" r="45" fill="none" stroke="#A4161A" stroke-width="14"/>
+        <path d="M42 45h36a6 6 0 0 1 6 6v17a6 6 0 0 1-6 6H59l-10 9v-9h-7a6 6 0 0 1-6-6V51a6 6 0 0 1 6-6z" fill="#1C1917"/>
+        <line x1="34" y1="34" x2="86" y2="86" stroke="#A4161A" stroke-width="11"/>
+      </svg>
+      <h1>Non lo dire</h1>
+    </header>
+    <div class="field">
+      <span class="field-label" id="lbl-teams">Squadre</span>
+      <div class="stepper" role="group" aria-labelledby="lbl-teams">
+        <button type="button" class="step" id="team-count-minus" aria-label="Una squadra in meno">−</button>
+        <output id="team-count" aria-live="polite">2</output>
+        <button type="button" class="step" id="team-count-plus" aria-label="Una squadra in più">+</button>
+      </div>
+    </div>
+    <div id="team-names" class="team-names"></div>
+    <div class="field">
+      <span class="field-label" id="lbl-rounds">Round</span>
+      <div class="stepper" role="group" aria-labelledby="lbl-rounds">
+        <button type="button" class="step" id="round-count-minus" aria-label="Un round in meno">−</button>
+        <output id="round-count" aria-live="polite">5</output>
+        <button type="button" class="step" id="round-count-plus" aria-label="Un round in più">+</button>
+      </div>
+    </div>
+    <button id="btn-start" class="btn btn-paper">Inizia partita</button>
+    <button id="btn-resume" class="btn-link hidden">Riprendi la partita salvata</button>
   </section>
 
   <section class="screen" id="screen-handoff">
     <p class="round-label" id="handoff-round"></p>
-    <h2 id="handoff-team"></h2>
-    <p>Passa il telefono a chi descrive.</p>
-    <button id="btn-go" class="primary big">Via!</button>
-    <div id="countdown" class="countdown hidden"></div>
+    <p class="lead">Tocca a</p>
+    <h2 id="handoff-team" class="big-name"></h2>
+    <p class="hint">Passa il telefono a chi descrive.</p>
+    <button id="btn-go" class="btn btn-paper">Via!</button>
+    <div id="countdown" class="countdown hidden" aria-live="assertive"></div>
   </section>
 
   <section class="screen" id="screen-turn">
     <div class="turn-top">
-      <span id="turn-timer" class="timer">60</span>
+      <span id="turn-timer" class="timer">1:00</span>
       <div class="timerbar"><div id="turn-timerbar-fill"></div></div>
-      <span id="turn-meta"></span>
     </div>
-    <div class="card">
-      <h2 id="card-word"></h2>
-      <ul id="card-taboo"></ul>
+    <div class="turn-meta">
+      <span id="turn-team"></span>
+      <span id="turn-points"></span>
     </div>
+    <article class="card" id="card">
+      <h2 id="card-word" class="card-word"></h2>
+      <ul id="card-taboo" class="card-taboo" aria-label="Parole vietate"></ul>
+    </article>
     <div class="turn-actions">
-      <button id="btn-taboo" class="danger">✗ Vietata</button>
-      <button id="btn-skip" class="ghost">Skip (<span id="skip-count">3</span>)</button>
-      <button id="btn-correct" class="success">✓ Indovinata</button>
+      <button id="btn-taboo" class="btn btn-taboo">✗ Vietata</button>
+      <button id="btn-skip" class="btn btn-skip">Skip <span id="skip-count">3</span></button>
+      <button id="btn-correct" class="btn btn-ok">✓ Indovinata</button>
     </div>
   </section>
 
   <section class="screen" id="screen-turnend">
-    <h2>Turno finito</h2>
-    <p id="turnend-summary"></p>
-    <ol id="turnend-standings" class="standings"></ol>
-    <button id="btn-next" class="primary big"></button>
+    <h2 class="title">Turno finito</h2>
+    <p id="turnend-summary" class="summary"></p>
+    <ol id="turnend-standings" class="sheet"></ol>
+    <button id="btn-next" class="btn btn-box"></button>
   </section>
 
   <section class="screen" id="screen-gameover">
-    <h2>Risultati finali</h2>
-    <ol id="gameover-standings" class="standings"></ol>
-    <button id="btn-newgame" class="primary big">Nuova partita</button>
+    <p class="lead" id="gameover-lead">Vince</p>
+    <h2 id="gameover-winner" class="big-name"></h2>
+    <ol id="gameover-standings" class="sheet"></ol>
+    <button id="btn-newgame" class="btn btn-box">Nuova partita</button>
   </section>
 </main>
-
 <script type="module" src="app.js"></script>
 </body>
 </html>
