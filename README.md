@@ -62,7 +62,7 @@ sw.js  ──▶  cache di tutti gli asset: dopo la prima visita si gioca offlin
 
 - **`game.js` non conosce il browser.** Ogni funzione prende uno stato e ne
   restituisce uno nuovo, senza mutare l'input. È questo che la rende testabile
-  senza aprire un browser: i 19 test girano in Node in una trentina di millisecondi.
+  senza aprire un browser: i 20 test girano in Node in una trentina di millisecondi.
 - **Il timer usa una scadenza assoluta** (`turnEndsAt`), non un decremento. Un
   `setInterval` sospeso mentre lo schermo è spento non fa perdere il conto.
 - **Il service worker serve prima dalla cache**, con la rete come ripiego e
@@ -120,14 +120,15 @@ barra del browser, e funziona senza connessione.
 
 ```
 index.html      le 5 schermate (setup, passaggio, turno, fine turno, risultati)
-style.css       stile mobile-first scuro, variabili colore in :root
+style.css       stile "scatola di gioco", token colore e font in :root
+fonts/          Zilla Slab + Atkinson Hyperlegible (woff2, OFL), per l'offline
 app.js          UI: router delle schermate, timer, Wake Lock, salvataggio, SW
 game.js         logica pura: newGame, correct, taboo, skip, nextTurn, standings
 cards.js        1491 carte { w, t[5] }, raggruppate per categoria nei commenti
 sw.js           service worker, cache-first
 manifest.webmanifest + icons/    metadati PWA e icone
 tools/make-icons.mjs             rigenera le icone
-tests/logic.test.mjs             19 test di game.js
+tests/logic.test.mjs             20 test di game.js
 tests/validate-cards.mjs         controlli di integrità sul mazzo
 docs/superpowers/                spec di design e piano di implementazione
 HANDOFF.md                       note per riprendere in mano il progetto
@@ -136,7 +137,7 @@ HANDOFF.md                       note per riprendere in mano il progetto
 ## Test
 
 ```bash
-npm test            # 19 test della logica + validazione del mazzo
+npm test            # 20 test della logica + validazione del mazzo
 npm run test:logic  # solo la logica
 ```
 
@@ -152,7 +153,7 @@ parola da indovinare. Passa quando stampa `validate-cards: OK (1491 cards)`.
 | Aggiungere o correggere carte | `cards.js`, poi `node tests/validate-cards.mjs` |
 | Cambiare durata turno o numero di skip | `TURN_MS` e `SKIPS_PER_TURN` in `game.js` |
 | Cambiare le regole di punteggio | `correct` / `taboo` / `nextTurn` in `game.js`, e aggiorna i test |
-| Grafica e colori | variabili in `:root` in `style.css` |
+| Grafica e colori | token in `:root` in `style.css`, font in `fonts/` |
 | Flusso delle schermate | oggetto `renderers` in `app.js` |
 
 ## Deploy
@@ -160,8 +161,8 @@ parola da indovinare. Passa quando stampa `validate-cards: OK (1491 cards)`.
 Push su `main`: GitHub Pages ripubblica da solo in circa un minuto.
 
 ⚠️ **Se hai toccato un file in cache** (`index.html`, `style.css`, `app.js`,
-`game.js`, `cards.js`), devi incrementare la costante `CACHE` in `sw.js`
-(`nonlodire-v1` → `nonlodire-v2`, e così via). Altrimenti il service worker
+`game.js`, `cards.js`, `fonts/`), devi incrementare la costante `CACHE` in `sw.js`
+(ora `nonlodire-v3` → `nonlodire-v4`, e così via). Altrimenti il service worker
 continua a servire la versione vecchia a chi ha già aperto l'app, e la modifica
 non arriva a nessuno.
 

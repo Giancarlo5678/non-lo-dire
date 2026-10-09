@@ -23,23 +23,24 @@ Nessuna dipendenza da installare. Serve solo Node (per i test) e Python3 (per l'
 | `game.js` | **Logica pura** (DOM-free, testata): stato, punteggi, skip, round, mazzo, classifica. Ogni funzione ritorna nuovo stato, non muta gli input. |
 | `app.js` | UI: le 5 schermate, timer (timestamp), Wake Lock, persistenza `localStorage`, service worker. |
 | `cards.js` | ~1491 carte `{ w: 'Parola', t: ['5','parole','vietate','...'] }`. |
-| `index.html` / `style.css` | Markup 5 schermate + stile mobile-first dark. |
+| `index.html` / `style.css` | Markup 5 schermate + stile "scatola di gioco" (token colore in `:root`). |
+| `fonts/` | Zilla Slab e Atkinson Hyperlegible in woff2 (OFL), inclusi per l'offline. |
 | `sw.js` | Service worker, cache offline di tutti gli asset. |
-| `manifest.webmanifest` / `icons/` | Metadati PWA + icone (rigenerabili con `node tools/make-icons.mjs`). |
-| `tests/logic.test.mjs` | 19 test della logica (node:test). |
+| `manifest.webmanifest` / `icons/` | Metadati PWA + icone col cartello di divieto (rigenerabili con `node tools/make-icons.mjs`). |
+| `tests/logic.test.mjs` | 20 test della logica (node:test). |
 | `tests/validate-cards.mjs` | Validazione database carte. |
 | `docs/superpowers/` | Spec di design e piano di implementazione. |
 
 ## Comandi
 ```bash
-npm test                       # 19 test logica + validazione carte
+npm test                       # 20 test logica + validazione carte
 python3 -m http.server 8000    # anteprima locale → http://localhost:8000
 ```
 
 ## Deploy (dopo una modifica)
 1. `git add -A && git commit -m "..."` e `git push` su `main`.
-2. **Se hai toccato un asset cacheato** (app.js, game.js, cards.js, style.css, index.html):
-   bumpa la costante `CACHE` in `sw.js` (ora `nonlodire-v1` → `-v2`, ecc.), altrimenti il
+2. **Se hai toccato un asset cacheato** (app.js, game.js, cards.js, style.css, index.html, fonts/):
+   bumpa la costante `CACHE` in `sw.js` (ora `nonlodire-v3` → `-v4`, ecc.), altrimenti il
    service worker continua a servire la versione vecchia.
 3. GitHub Pages ripubblica da solo da `main` in ~1 minuto.
 
@@ -48,7 +49,7 @@ python3 -m http.server 8000    # anteprima locale → http://localhost:8000
   uniche, esattamente 5 vietate, nessuna vietata = parola).
 - **Regole di gioco** (punti, durata turno, numero skip) → costanti e funzioni in `game.js`
   (`TURN_MS`, `SKIPS_PER_TURN`, `correct`/`taboo`/`skip`/`nextTurn`). Aggiorna i test.
-- **Grafica/layout** → `style.css` (variabili colore in `:root`) e `index.html`.
+- **Grafica/layout** → `style.css` (token colore e font in `:root`) e `index.html`. Design di riferimento: `docs/superpowers/specs/2026-10-09-restyling-scatola-di-gioco-design.md`.
 - **Flusso schermate / timer** → `app.js` (oggetto `renderers`).
 
 ## Metodo di lavoro consigliato per riprendere
