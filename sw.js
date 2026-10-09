@@ -1,4 +1,4 @@
-const CACHE = 'nonlodire-v3';
+const CACHE = 'nonlodire-v4';
 const ASSETS = [
   './', './index.html', './style.css', './app.js', './game.js', './cards.js',
   './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png',

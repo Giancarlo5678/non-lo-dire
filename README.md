@@ -162,7 +162,7 @@ Push su `main`: GitHub Pages ripubblica da solo in circa un minuto.
 
 ⚠️ **Se hai toccato un file in cache** (`index.html`, `style.css`, `app.js`,
 `game.js`, `cards.js`, `fonts/`), devi incrementare la costante `CACHE` in `sw.js`
-(ora `nonlodire-v3` → `nonlodire-v4`, e così via). Altrimenti il service worker
+(ora `nonlodire-v4` → `nonlodire-v5`, e così via). Altrimenti il service worker
 continua a servire la versione vecchia a chi ha già aperto l'app, e la modifica
 non arriva a nessuno.
 

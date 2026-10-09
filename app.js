@@ -155,7 +155,8 @@ function renderCard() {
 
 function renderMeta() {
   $('turn-team').textContent = state.teams[state.currentTeamIndex].name;
-  $('turn-points').textContent = `turno ${signed(state.turnPoints)}`;
+  // "+2 punti", non "turno +2": sembrava il numero del turno
+  $('turn-points').textContent = `${signed(state.turnPoints)} ${Math.abs(state.turnPoints) === 1 ? 'punto' : 'punti'}`;
   $('skip-count').textContent = String(state.skipsLeft);
   $('btn-skip').disabled = state.skipsLeft <= 0;
 }

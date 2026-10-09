@@ -40,7 +40,7 @@ python3 -m http.server 8000    # anteprima locale → http://localhost:8000
 ## Deploy (dopo una modifica)
 1. `git add -A && git commit -m "..."` e `git push` su `main`.
 2. **Se hai toccato un asset cacheato** (app.js, game.js, cards.js, style.css, index.html, fonts/):
-   bumpa la costante `CACHE` in `sw.js` (ora `nonlodire-v3` → `-v4`, ecc.), altrimenti il
+   bumpa la costante `CACHE` in `sw.js` (ora `nonlodire-v4` → `-v5`, ecc.), altrimenti il
    service worker continua a servire la versione vecchia.
 3. GitHub Pages ripubblica da solo da `main` in ~1 minuto.
 
