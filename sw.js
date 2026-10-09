@@ -1,4 +1,4 @@
-const CACHE = 'nonlodire-v4';
+const CACHE = 'nonlodire-v5';
 const ASSETS = [
   './', './index.html', './style.css', './app.js', './game.js', './cards.js',
   './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png',
@@ -7,7 +7,10 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  // cache: 'reload' scavalca la cache HTTP (GitHub Pages: max-age=600): senza, una versione
+  // nuova installata entro 10 minuti dall'ultima apertura metteva in cache i file VECCHI.
+  const fresh = ASSETS.map((url) => new Request(url, { cache: 'reload' }));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(fresh)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', (e) => {
   e.waitUntil(
