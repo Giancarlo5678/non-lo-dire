@@ -1,7 +1,9 @@
-const CACHE = 'nonlodire-v2';
+const CACHE = 'nonlodire-v3';
 const ASSETS = [
   './', './index.html', './style.css', './app.js', './game.js', './cards.js',
   './manifest.webmanifest', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png',
+  './fonts/zilla-slab-600.woff2', './fonts/zilla-slab-700.woff2',
+  './fonts/atkinson-hyperlegible-400.woff2', './fonts/atkinson-hyperlegible-700.woff2',
 ];
 
 self.addEventListener('install', (e) => {
